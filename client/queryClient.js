@@ -3,10 +3,6 @@ import { request } from "graphql-request";
 const URL = "http://localhost:8000/graphql";
 
 export const fetcher = (query, variables) => {
-  console.log("query", query);
-  console.log("variables", variables);
-  console.log("URL", URL);
-
   return request(URL, query, variables);
 };
 
@@ -15,4 +11,22 @@ export const QueryKeys = {
   MESSAGE: "MESSAGE",
   USERS: "USERS",
   USER: "USER",
+};
+
+export const getNewMessages = (old) => ({
+  pageParams: old.pageParams,
+  pages: old.pages.map(({ messages }) => ({ messages: [...messages] })),
+});
+
+export const findTargetMsgIndex = (pages, id) => {
+  let msgIndex = -1;
+
+  const pageIndex = pages.findIndex(({ messages }) => {
+    msgIndex = messages.findIndex((msg) => msg.id === id);
+    if (msgIndex > -1) {
+      return true;
+    }
+    return false;
+  });
+  return { pageIndex, msgIndex };
 };
